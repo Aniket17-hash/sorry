@@ -666,6 +666,23 @@
   }
 
 })();
+emailjs.init("YOUR_PUBLIC_KEY");
+
+yesBtn.addEventListener("click", function () {
+    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+        message: "Shweta clicked the 'Yes, you're forgiven' button ❤️"
+    }).then(function () {
+        console.log("Email sent!");
+    });
+});
+
+emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+    message: "She forgave you ❤️",
+    date: new Date().toLocaleString(),
+    page: window.location.href
+});
+
 </script>
+  
 </body>
 </html>
