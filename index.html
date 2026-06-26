@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root{
     --plum:#2D1B3D;
@@ -669,14 +670,14 @@
 emailjs.init("YOUR_PUBLIC_KEY");
 
 yesBtn.addEventListener("click", function () {
-    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+    emailjs.send("","template_vpkp1k2", {
         message: "Shweta clicked the 'Yes, you're forgiven' button ❤️"
     }).then(function () {
         console.log("Email sent!");
     });
 });
 
-emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+emailjs.send("","template_vpkp1k2", {
     message: "She forgave you ❤️",
     date: new Date().toLocaleString(),
     page: window.location.href
