@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorry🥹</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum:#2D1B3D;
+    --plum-deep:#1E1129;
+    --pink:#FF6B9D;
+    --peach:#FFA66B;
+    --cream:#FFE5D4;
+    --rose:#C44569;
+    --gold:#FFD56B;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  body{
+    background: radial-gradient(ellipse at top, var(--plum) 0%, var(--plum-deep) 70%);
+    color: var(--cream);
+    font-family:'Quicksand', sans-serif;
+    overflow-x:hidden;
+    min-height:100vh;
+    position:relative;
+  }
+
+  #heart-canvas{
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:1;
+  }
+
+  .stage{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:6vh 6vw;
+    position:relative;
+    z-index:2;
+  }
+
+  h1, h2{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    line-height:1.15;
+  }
+
+  /* ---------- Progress meter ---------- */
+  #meter-wrap{
+    position:fixed;
+    top:0; left:0;
+    width:100%;
+    height:6px;
+    background:rgba(255,255,255,0.08);
+    z-index:50;
+  }
+  #meter-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--pink), var(--peach), var(--gold));
+    transition: width 0.15s ease-out;
+    box-shadow:0 0 12px var(--pink);
+  }
+  #meter-label{
+    position:fixed;
+    top:12px; right:18px;
+    font-size:0.75rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--cream);
+    opacity:0.65;
+    z-index:50;
+    font-weight:600;
+  }
+
+  /* ---------- Stage 1: Hero confession ---------- */
+  #stage-hero h1{
+    font-size:clamp(2.4rem, 9vw, 5.5rem);
+    color:var(--cream);
+    text-shadow:0 4px 30px rgba(255,107,157,0.4);
+  }
+  #stage-hero .accent{
+    color:var(--pink);
+    display:block;
+    font-size:clamp(1.6rem, 6vw, 3rem);
+    margin-top:0.3rem;
+  }
+  #stage-hero p{
+    margin-top:1.6rem;
+    font-size:clamp(1rem, 2.4vw, 1.3rem);
+    max-width:32ch;
+    opacity:0.85;
+  }
+  .scroll-hint{
+    margin-top:3.5rem;
+    font-size:0.9rem;
+    opacity:0.55;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(10px); }
+  }
+
+  /* ---------- Stage 2: Crossed-out excuses ---------- */
+  #stage-excuses h2{
+    font-size:clamp(1.7rem, 5vw, 2.6rem);
+    margin-bottom:2.5rem;
+    color:var(--peach);
+  }
+  .excuse-list{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:1.1rem;
+    font-size:clamp(1.05rem, 2.6vw, 1.4rem);
+  }
+  .excuse-list li{
+    position:relative;
+    color:var(--cream);
+    opacity:0;
+    transform:translateX(-18px);
+  }
+  .excuse-list li.show{
+    opacity:1;
+    transform:translateX(0);
+    transition: all 0.5s ease;
+  }
+  .excuse-list li .strike{
+    position:relative;
+  }
+  .excuse-list li.show .strike::after{
+    content:'';
+    position:absolute;
+    left:0; top:50%;
+    width:0%;
+    height:3px;
+    background:var(--rose);
+    transition: width 0.6s ease 0.3s;
+  }
+  .excuse-list li.show .strike::after{ width:100%; }
+  .excuse-list .real{
+    color:var(--gold);
+    font-weight:700;
+    margin-top:0.6rem;
+  }
+
+  /* ---------- Stage 3: Funny truths gallery ---------- */
+  #stage-truths h2{
+    font-size:clamp(1.7rem, 5vw, 2.6rem);
+    margin-bottom:0.6rem;
+    color:var(--pink);
+  }
+  #stage-truths .sub{
+    opacity:0.7;
+    margin-bottom:2.6rem;
+    font-size:1rem;
+  }
+  .card-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:1.2rem;
+    max-width:780px;
+  }
+  .flip-card{
+    perspective:1000px;
+    height:170px;
+    cursor:pointer;
+  }
+  .flip-inner{
+    position:relative;
+    width:100%; height:100%;
+    transition: transform 0.6s;
+    transform-style:preserve-3d;
+  }
+  .flip-card.flipped .flip-inner{
+    transform:rotateY(180deg);
+  }
+  .flip-face{
+    position:absolute;
+    width:100%; height:100%;
+    backface-visibility:hidden;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:1.2rem;
+    font-size:1rem;
+    line-height:1.4;
+  }
+  .flip-front{
+    background:rgba(255,255,255,0.06);
+    border:1.5px dashed var(--peach);
+    font-family:'Baloo 2', sans-serif;
+    font-size:1.15rem;
+    color:var(--peach);
+  }
+  .flip-back{
+    background:linear-gradient(135deg, var(--rose), var(--pink));
+    color:var(--cream);
+    transform:rotateY(180deg);
+    font-weight:600;
+  }
+
+  /* ---------- Stage 4: The apology letter ---------- */
+  #stage-letter{
+    background:rgba(255,255,255,0.04);
+  }
+  .letter-box{
+    max-width:600px;
+    background:rgba(255,229,212,0.07);
+    border:1px solid rgba(255,166,107,0.3);
+    border-radius:24px;
+    padding:clamp(1.8rem, 5vw, 3.2rem);
+    backdrop-filter:blur(6px);
+  }
+  .letter-box h2{
+    color:var(--gold);
+    font-size:clamp(1.6rem, 4.5vw, 2.2rem);
+    margin-bottom:1.2rem;
+  }
+  .letter-box p{
+    font-size:clamp(1rem, 2.2vw, 1.15rem);
+    line-height:1.75;
+    text-align:left;
+    margin-bottom:1rem;
+    opacity:0.92;
+  }
+  .letter-box .sign{
+    margin-top:1.6rem;
+    font-family:'Baloo 2', sans-serif;
+    font-size:1.3rem;
+    color:var(--pink);
+    text-align:right;
+  }
+
+  /* ---------- Stage 5: Forgive button ---------- */
+  #stage-ask h2{
+    font-size:clamp(1.9rem, 6vw, 3rem);
+    margin-bottom:2.2rem;
+  }
+  .btn-row{
+    display:flex;
+    gap:1.4rem;
+    flex-wrap:wrap;
+    justify-content:center;
+    position:relative;
+  }
+  button{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:600;
+    font-size:1.15rem;
+    border:none;
+    border-radius:50px;
+    padding:0.95rem 2.3rem;
+    cursor:pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  button:focus-visible{
+    outline:3px solid var(--gold);
+    outline-offset:3px;
+  }
+  #yes-btn{
+    background:linear-gradient(135deg, var(--pink), var(--rose));
+    color:white;
+    box-shadow:0 8px 24px rgba(255,107,157,0.35);
+  }
+  #yes-btn:hover{
+    transform:scale(1.06);
+    box-shadow:0 10px 30px rgba(255,107,157,0.5);
+  }
+  #no-btn{
+    background:transparent;
+    border:2px solid rgba(255,229,212,0.4);
+    color:var(--cream);
+    position:relative;
+  }
+  #no-btn:hover{ opacity:0.8; }
+
+  .nope-caption{
+    margin-top:1.2rem;
+    font-size:0.9rem;
+    opacity:0.6;
+    min-height:1.2em;
+  }
+
+  /* ---------- Stage 6: Celebration ---------- */
+  #stage-final{
+    display:none;
+  }
+  #stage-final.active{
+    display:flex;
+  }
+  #stage-final h1{
+    font-size:clamp(2.2rem, 8vw, 4.5rem);
+    color:var(--gold);
+    text-shadow:0 4px 30px rgba(255,213,107,0.5);
+  }
+  #stage-final p{
+    margin-top:1.2rem;
+    font-size:clamp(1.05rem, 2.6vw, 1.35rem);
+    max-width:34ch;
+    opacity:0.9;
+  }
+  .heart-icon{
+    font-size:3rem;
+    margin-bottom:0.6rem;
+    display:inline-block;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.15); }
+  }
+
+  #confetti-canvas{
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:60;
+  }
+
+  .replay{
+    margin-top:2.4rem;
+    background:transparent;
+    border:1.5px solid var(--peach);
+    color:var(--peach);
+    font-size:0.95rem;
+    padding:0.6rem 1.5rem;
+  }
+  .replay:hover{ background:rgba(255,166,107,0.12); }
+
+  /* hidden a11y live region */
+  .sr-only{
+    position:absolute;
+    width:1px; height:1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+  }
+</style>
+</head>
+<body>
+
+<div id="meter-wrap"><div id="meter-fill"></div></div>
+<div id="meter-label">sorry-meter: <span id="meter-pct">0%</span></div>
+
+<canvas id="heart-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+
+<main id="scroller">
+
+  <section class="stage" id="stage-hero">
+    <h1>I am so, SO sorry Shwetuu..<span class="accent">— and yes, this required a whole website.</span></h1>
+    <p>A normal "sorry" text felt too small for how badly I feel about not calling you. So Shweta, please accept this fully unnecessary, slightly dramatic, 100% sincere apology experience.</p>
+    <div class="scroll-hint">↓ scroll, I'll explain everything ↓</div>
+  </section>
+
+  <section class="stage" id="stage-excuses">
+    <h2>Excuses I considered using<br>(and rejected, because I respect you)</h2>
+    <ul class="excuse-list" id="excuse-list">
+      <li><span class="strike">"My phone died for 3 days straight"</span></li>
+      <li><span class="strike">"I got lost on the way to call you"</span></li>
+      <li><span class="strike">"The teacher's office didn't exist, I made it up"</span></li>
+      <li><span class="strike">"I forgot how phones work, generally"</span></li>
+      <li class="real">The truth: I spent the whole day chasing teachers for NOC signatures — the ones I literally need to get my degree certificate — and by the time I looked up, the day was gone and so was my call to you.</li>
+    </ul>
+  </section>
+
+  <section class="stage" id="stage-truths">
+    <h2>Tap each card. I'll answer honestly.</h2>
+    <p class="sub">(things I should have just said sooner)</p>
+    <div class="card-grid" id="card-grid">
+      <!-- cards injected by JS -->
+    </div>
+  </section>
+
+  <section class="stage" id="stage-letter">
+    <div class="letter-box">
+      <h2>Okay, real talk for a second</h2>
+      <p>Shwetuu 🥹 — I know "sorry" is just five letters, and I used way too many pixels here to dodge actually saying it simply. So here it is, simply:</p>
+      <p>I'm sorry I didn't call you. That whole day I was running between teachers trying to get my NOC signatures — the ones I need just to get my degree certificate — and it turned into one of those days where every hour got eaten by someone else's schedule. By the time I had a free minute, it was late, and I told myself I'd call "in a bit." That bit never came, and I know how that must have felt on your end.</p>
+      <p>I understand why you went quiet. If I'm being honest with myself, I'd probably feel the same way — like I wasn't worth fitting in, like I was easy to forget. But that's not what happened in my head, even if it's what happened in real life. You weren't forgotten. You were the person I kept meaning to get to the second things calmed down.</p>
+      <p>You're not a small part of my life that can wait its turn behind paperwork. You're one of the people who actually matters most to me, and I hate that my one bad, chaotic day made you doubt that. I don't expect this page to fix it instantly. I just needed you to know I see why you're hurt, I'm not brushing it off, and I care about you a lot more than this NOC chase ever did.</p>
+      <p class="sign">— with way too much love, me</p>
+    </div>
+  </section>
+
+  <section class="stage" id="stage-ask">
+    <h2>So... are we okay?</h2>
+    <div class="btn-row">
+      <button id="yes-btn">Yes, you're forgiven 💗</button>
+      <button id="no-btn">Not yet</button>
+    </div>
+    <div class="nope-caption" id="nope-caption"></div>
+  </section>
+
+  <section class="stage" id="stage-final">
+    <div class="heart-icon">💞</div>
+    <h1>Best news all week.</h1>
+    <p>Thank you for forgiving me, Shweta. Degree or no degree, signatures or no signatures — you come first next time, no exceptions. Let's talk properly soon.</p>
+    <button class="replay" id="replay-btn">Watch me grovel again</button>
+  </section>
+
+</main>
+
+<p class="sr-only" id="live-region" aria-live="polite"></p>
+
+<script>
+(function(){
+  /* ============ Floating heart particles (ambient, full-page) ============ */
+  const heartCanvas = document.getElementById('heart-canvas');
+  const hctx = heartCanvas.getContext('2d');
+  let hearts = [];
+  let docHeight = document.body.scrollHeight;
+
+  function resizeHeartCanvas(){
+    docHeight = document.body.scrollHeight;
+    heartCanvas.width = window.innerWidth;
+    heartCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeHeartCanvas);
+  resizeHeartCanvas();
+
+  function spawnHeart(){
+    hearts.push({
+      x: Math.random() * window.innerWidth,
+      y: window.innerHeight + 20,
+      size: 8 + Math.random() * 14,
+      speed: 0.4 + Math.random() * 0.9,
+      drift: (Math.random() - 0.5) * 0.6,
+      alpha: 0.15 + Math.random() * 0.35,
+      hue: Math.random() > 0.5 ? '255,107,157' : '255,166,107'
+    });
+  }
+
+  function drawHeart(ctx, x, y, size, alpha, hue){
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(size/16, size/16);
+    ctx.beginPath();
+    ctx.moveTo(0, 4);
+    ctx.bezierCurveTo(-8, -6, -16, 2, 0, 14);
+    ctx.bezierCurveTo(16, 2, 8, -6, 0, 4);
+    ctx.closePath();
+    ctx.fillStyle = `rgba(${hue},${alpha})`;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  let lastSpawn = 0;
+  function animateHearts(ts){
+    hctx.clearRect(0,0,heartCanvas.width, heartCanvas.height);
+    if(!lastSpawn || ts - lastSpawn > 450){
+      if(hearts.length < 26) spawnHeart();
+      lastSpawn = ts;
+    }
+    hearts.forEach(h => {
+      h.y -= h.speed;
+      h.x += h.drift;
+      drawHeart(hctx, h.x, h.y, h.size, h.alpha, h.hue);
+    });
+    hearts = hearts.filter(h => h.y > -30);
+    requestAnimationFrame(animateHearts);
+  }
+  requestAnimationFrame(animateHearts);
+
+  /* ============ Scroll progress meter ============ */
+  const meterFill = document.getElementById('meter-fill');
+  const meterPct = document.getElementById('meter-pct');
+  const liveRegion = document.getElementById('live-region');
+  let lastAnnounced = 0;
+
+  function updateMeter(){
+    const scrollTop = window.scrollY;
+    const max = document.body.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? Math.min(100, Math.round((scrollTop / max) * 100)) : 0;
+    meterFill.style.width = pct + '%';
+    meterPct.textContent = pct + '%';
+    if(Math.abs(pct - lastAnnounced) >= 20){
+      lastAnnounced = pct;
+      liveRegion.textContent = 'Sorry meter at ' + pct + ' percent';
+    }
+  }
+  window.addEventListener('scroll', updateMeter, {passive:true});
+  updateMeter();
+
+  /* ============ Stage: excuses reveal on scroll ============ */
+  const excuseItems = document.querySelectorAll('#excuse-list li');
+  const excuseObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const items = Array.from(excuseItems);
+        items.forEach((li, i) => {
+          setTimeout(() => li.classList.add('show'), i * 350);
+        });
+        excuseObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.4 });
+  excuseObserver.observe(document.getElementById('stage-excuses'));
+
+  /* ============ Stage: flip cards ============ */
+  const truths = [
+    { front: "Why didn't you call?", back: "I was running between teachers all day chasing NOC signatures for my degree certificate — not because you mattered less, but because that day genuinely had no gaps in it." },
+    { front: "Do you not value me?", back: "No. That's the opposite of true. You're one of the most important parts of my life — I just handled a stressful day badly and let it look like I didn't care." },
+    { front: "Was missing a call really that big a deal?", back: "To you it clearly was, and that's enough reason for it to matter to me too. Your feelings aren't 'too much' — I just dropped the ball." },
+    { front: "Will this happen again?", back: "I'm going to message you even on chaotic days, even if it's just 'crazy day, thinking of you' — so you're never left guessing." },
+    { front: "Are you just saying sorry to end the silence?", back: "No. I'd say this even if you took another week to reply. I want you to actually feel it, not just hear it." },
+    { front: "Do I matter to you?", back: "More than a signature on a form. More than the degree it's attached to. You're not a footnote in my busy day — I just acted like one, and I hate that." }
+  ];
+
+  const grid = document.getElementById('card-grid');
+  truths.forEach((t, i) => {
+    const card = document.createElement('div');
+    card.className = 'flip-card';
+    card.innerHTML = `
+      <div class="flip-inner">
+        <div class="flip-face flip-front">${t.front}</div>
+        <div class="flip-face flip-back">${t.back}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', t.front);
+    card.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        card.classList.toggle('flipped');
+      }
+    });
+    grid.appendChild(card);
+  });
+
+  /* ============ Stage: forgive buttons ============ */
+  const yesBtn = document.getElementById('yes-btn');
+  const noBtn = document.getElementById('no-btn');
+  const nopeCaption = document.getElementById('nope-caption');
+  const finalStage = document.getElementById('stage-final');
+  const askStage = document.getElementById('stage-ask');
+
+  const nopeLines = [
+    "Fair enough. Try again?",
+    "Okay but the button is right there...",
+    "I'll just wait here. Forever, if needed.",
+    "Respect. Still hoping though.",
+    "This button has seen better days.",
+    "It's okay to make me work for it 😅"
+  ];
+  let nopeIndex = 0;
+  let dodgeCount = 0;
+
+  noBtn.addEventListener('click', (e) => {
+    nopeCaption.textContent = nopeLines[nopeIndex % nopeLines.length];
+    nopeIndex++;
+    dodgeCount++;
+
+    // After a couple of clicks, the "No" button starts gently dodging
+    if(dodgeCount >= 2){
+      const row = document.querySelector('.btn-row');
+      const rowRect = row.getBoundingClientRect();
+      const maxX = rowRect.width - noBtn.offsetWidth - 10;
+      const maxY = 40;
+      const randX = (Math.random() - 0.5) * Math.min(160, maxX);
+      const randY = (Math.random() - 0.5) * maxY;
+      noBtn.style.transform = `translate(${randX}px, ${randY}px)`;
+      noBtn.style.transition = 'transform 0.35s ease';
+    }
+  });
+
+  yesBtn.addEventListener('click', () => {
+    askStage.style.display = 'none';
+    finalStage.classList.add('active');
+    finalStage.scrollIntoView({ behavior:'smooth' });
+    launchConfetti();
+  });
+
+  document.getElementById('replay-btn').addEventListener('click', () => {
+    finalStage.classList.remove('active');
+    askStage.style.display = 'flex';
+    noBtn.style.transform = 'translate(0,0)';
+    dodgeCount = 0;
+    nopeCaption.textContent = '';
+    window.scrollTo({ top: 0, behavior:'smooth' });
+  });
+
+  /* ============ Confetti burst ============ */
+  const confettiCanvas = document.getElementById('confetti-canvas');
+  const cctx = confettiCanvas.getContext('2d');
+  function resizeConfetti(){
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeConfetti);
+  resizeConfetti();
+
+  function launchConfetti(){
+    const colors = ['#FF6B9D', '#FFA66B', '#FFD56B', '#C44569', '#FFE5D4'];
+    let pieces = [];
+    for(let i=0; i<140; i++){
+      pieces.push({
+        x: window.innerWidth/2 + (Math.random()-0.5)*200,
+        y: window.innerHeight/2,
+        vx: (Math.random()-0.5) * 11,
+        vy: (Math.random()-1.6) * 11,
+        size: 5 + Math.random()*6,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        rot: Math.random()*360,
+        vrot: (Math.random()-0.5) * 14,
+        shape: Math.random() > 0.5 ? 'rect' : 'heart',
+        life: 0
+      });
+    }
+    let frame = 0;
+    function tick(){
+      cctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+      frame++;
+      pieces.forEach(p => {
+        p.vy += 0.22; // gravity
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vrot;
+        p.life++;
+        cctx.save();
+        cctx.translate(p.x, p.y);
+        cctx.rotate(p.rot * Math.PI/180);
+        cctx.globalAlpha = Math.max(0, 1 - p.life/140);
+        cctx.fillStyle = p.color;
+        if(p.shape === 'rect'){
+          cctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+        } else {
+          cctx.beginPath();
+          const s = p.size/3;
+          cctx.moveTo(0, s*0.3);
+          cctx.bezierCurveTo(-s, -s*0.6, -s*2, s*0.3, 0, s*1.6);
+          cctx.bezierCurveTo(s*2, s*0.3, s, -s*0.6, 0, s*0.3);
+          cctx.fill();
+        }
+        cctx.restore();
+      });
+      pieces = pieces.filter(p => p.life < 140);
+      if(pieces.length > 0){
+        requestAnimationFrame(tick);
+      } else {
+        cctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+      }
+    }
+    tick();
+  }
+
+})();
+</script>
+</body>
+</html>
