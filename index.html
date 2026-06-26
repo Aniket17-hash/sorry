@@ -670,14 +670,14 @@
 emailjs.init("_tK_owwbGJvh10Bu_");
 
 yesBtn.addEventListener("click", function () {
-    emailjs.send("","template_vpkp1k2", {
+    emailjs.send("service_le26k5l","template_vpkp1k2", {
         message: "Shweta clicked the 'Yes, you're forgiven' button ❤️"
     }).then(function () {
         console.log("Email sent!");
     });
 });
 
-emailjs.send("","template_vpkp1k2", {
+emailjs.send("service_le26k5l","template_vpkp1k2", {
     message: "She forgave you ❤️",
     date: new Date().toLocaleString(),
     page: window.location.href
