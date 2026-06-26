@@ -667,19 +667,28 @@
   }
 
 })();
+const yesBtn = document.getElementById("yes-btn");
+
 emailjs.init("_tK_owwbGJvh10Bu_");
 
 yesBtn.addEventListener("click", function () {
+
     emailjs.send(
         "service_le26k5l",
         "template_vpkp1k2",
         {
-            message: "She forgave you ❤️",
-            date: new Date().toLocaleString()
+            message: "Shweta clicked Yes ❤️",
+            date: new Date().toLocaleString(),
+            page: window.location.href
         }
     )
-    .then(() => console.log("Email Sent"))
-    .catch(err => console.log(err));
+    .then(function () {
+        console.log("Email sent");
+    })
+    .catch(function (err) {
+        console.log(err);
+    });
+
 });
 
 
